@@ -26,7 +26,13 @@ Before the first run:
 Network it depends on:
 - Security group lending-mysql-sg with a self-referencing All TCP rule,
   so Glue can reach RDS from inside the VPC
-- S3 gateway endpoint
+- S3 gateway endpoint in the VPC, so Glue can reach S3 without internet access
+
+Tested:
+- Month missing in RDS: no rows, nothing written, tracker unchanged
+- Month added to RDS: 40,134 rows written to raw/loans_2018-12.parquet,
+  tracker moved to 2018-12
+"""
 
 # ---------- IMPORTS ----------
 import sys

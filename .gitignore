@@ -13,3 +13,7 @@ __pycache__/
 *.xlsx
 *_tracker.txt
 loans_dump.sql
+# Airflow (local Docker)
+04_orchestration/logs/
+04_orchestration/plugins/
+04_orchestration/config/
