@@ -17,8 +17,7 @@ flowchart LR
 ## Steps
 
 1. **Private route for Glue**
-   - Security group `lending-mysql-sg`: port 3306 from my laptop only, plus a
-     self-referencing rule so Glue can reach RDS.
+   - Security group lending-mysql-sg: port 3306 from an allow-listed admin IP only, plus a self-referencing rule so Glue can reach RDS.
    - S3 gateway endpoint, so Glue can reach S3 from inside the VPC (free).
    - Glue JDBC connection `lending-rds-conn` with the VPC, subnet and security group.
 
