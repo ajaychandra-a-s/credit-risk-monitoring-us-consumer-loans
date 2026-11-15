@@ -105,23 +105,8 @@ parameters (password hidden), not from the code.*
 The password is only stored in the Glue job parameters, not in this repository.
 In production it would live in AWS Secrets Manager.
 
-## Problems solved
-
-| Problem | Cause | Fix |
-|---|---|---|
-| Glue connection failed: VPC has no access to STS | Newer connection type checks itself from inside the VPC | Used a plain JDBC connection instead |
-| Test connection: no S3 endpoint for subnet | Subnet used the main route table implicitly | Linked the subnet to the route table explicitly |
-| Job failed with exit code 2 | `--db_password` parameter missing | Added the job parameter |
-| Job failed with NoSuchKey | Tracker file not in S3 yet | Uploaded `_state/extract_tracker.txt` |
-
 ## Files
 
 | File | Purpose |
 |---|---|
 | `loans_extract_job.py` | Glue job: next month from RDS to S3 raw |
-
-## Cost notes
-
-- RDS (db.t4g.micro) is stopped or deleted when not in use, with a snapshot to restore from.
-- The S3 gateway endpoint is free. Interface endpoints (STS, Secrets Manager) were
-  avoided because they charge per hour.
