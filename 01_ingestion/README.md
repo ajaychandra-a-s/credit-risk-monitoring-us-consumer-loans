@@ -1,4 +1,4 @@
-# 01 Ingestion: from the source database to S3 raw
+# 01 Ingestion: from the source database to S3 raw (Bronze)
 
 This stage moves the loans from the source database into the raw (Bronze) layer in S3.
 A Glue job runs inside AWS, finds the next month that has not been extracted yet,
@@ -14,21 +14,77 @@ flowchart LR
     B -.->|move to next month| T
 ```
 
-## Steps
+---
 
-1. **Private route for Glue**
-   - Security group lending-mysql-sg: port 3306 from an allow-listed admin IP only, plus a self-referencing rule so Glue can reach RDS.
-   - S3 gateway endpoint, so Glue can reach S3 from inside the VPC (free).
-   - Glue JDBC connection `lending-rds-conn` with the VPC, subnet and security group.
+### Step 1: Give Glue a private route to RDS
 
-2. **Extract job**
-   `loans_extract_job.py` reads the tracker, works out the next month, queries
-   RDS for it, writes Parquet to raw, and moves the tracker forward only after the
-   write succeeds. If the month has no rows yet, it writes nothing.
+**What:** A Glue JDBC connection, `lending-rds-conn`, with the VPC, subnet and
+security group of the database.
+**Why:** Glue jobs that use this connection run inside the same private network as
+RDS, so the database never has to be opened to the internet.
 
-3. **Test new data arriving**
-   December 2018 was held back in RDS, the job was run, then the month was released
-   and the job was run again (see `00_source_setup/rds_setup.sql`).
+The security group `lending-mysql-sg` allows port 3306 only from an allow-listed
+admin IP, plus a self-referencing rule so Glue can reach RDS.
+
+![Glue connection](images/01_glue_connection.png)
+*The JDBC connection to `lending_db`, set to run in the database's VPC subnet and
+security group.*
+
+---
+
+### Step 2: Give Glue a private route to S3
+
+**What:** An S3 gateway endpoint in the VPC.
+**Why:** Jobs inside the VPC have no internet access. The gateway endpoint gives
+them a private route to S3, free of charge, without a NAT gateway.
+
+![S3 gateway endpoint](images/02_s3_gateway_endpoint.png)
+*Gateway endpoint for `com.amazonaws.eu-north-1.s3`, attached to the subnet's route table.*
+
+---
+
+### Step 3: Build the extract job
+
+**What:** `loans_extract_job.py`, a Glue Python shell job.
+**How it works:**
+1. Read the last extracted month from the tracker in S3.
+2. Work out the next month and query it from RDS.
+3. Write the rows as one Parquet file to `raw/loans_YYYY-MM.parquet`.
+4. Move the tracker forward, only after the write succeeded.
+
+If the month has no rows yet, nothing is written and the tracker is not changed.
+
+![Extract job details](images/03a_extract_job_details.png)
+*A small Python shell job: 1/16 DPU and a 10 minute timeout.*
+
+![Extract job parameters](images/03b_extract_job_parameters.png)
+*The job runs through `lending-rds-conn`. The database login comes from job
+parameters (password hidden), not from the code.*
+
+---
+
+### Step 4: Test with no new data
+
+**What:** December 2018 was held back in RDS, then the job was run.
+**Why:** The job must not fail or write an empty file when nothing new has arrived.
+
+![Extract log, no new data](images/04_extract_log_no_new_data.png)
+*No rows for the next month: nothing written, tracker unchanged.*
+
+---
+
+### Step 5: Test a new month arriving
+
+**What:** December 2018 was released in RDS, then the job was run again.
+**Why:** This is the normal monthly case.
+
+![Extract log, new month](images/05_extract_log_new_month.png)
+*The job found December, wrote 40,134 loans to raw, then moved the tracker to 2018-12.*
+
+![S3 raw](images/06_s3_raw.png)
+*The raw layer: one Parquet file per month, 48 months in total.*
+
+---
 
 ## Test results
 
@@ -64,7 +120,7 @@ In production it would live in AWS Secrets Manager.
 |---|---|
 | `loans_extract_job.py` | Glue job: next month from RDS to S3 raw |
 
-## Cost notess
+## Cost notes
 
 - RDS (db.t4g.micro) is stopped or deleted when not in use, with a snapshot to restore from.
 - The S3 gateway endpoint is free. Interface endpoints (STS, Secrets Manager) were
