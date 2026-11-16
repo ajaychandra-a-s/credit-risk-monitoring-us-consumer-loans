@@ -1,24 +1,36 @@
 # 03 Warehouse: from S3 processed to Redshift (Silver and Gold)
 
 This stage loads each new month of cleaned loans into Amazon Redshift Serverless
-and updates the Gold star schema that Power BI reads. Only the new month is
+and updates the Gold star schema that the dashboard reads. Only the new month is
 loaded. Existing rows and existing dimension IDs are never changed.
 
 ## Flow
 
 ```mermaid
 flowchart LR
-    T1["_state/silver_tracker.txt"] -.->|last month processed| J
-    T2["_state/gold_tracker.txt"] -.->|last month loaded| J
-    A["S3 processed<br/>processed/issue_month=YYYY-MM/"] --> J["Glue Python shell job<br/>loans_gold_job"]
+    A["S3 processed<br/>(Silver files)"] --> J["Glue job<br/>loans_gold_job"]
     J -->|COPY| S[("Redshift<br/>silver.loans")]
-    S --> D["gold dimensions<br/>grade, purpose, geography,<br/>loan_status, date"]
+    S --> D["gold dimensions"]
     S --> F["gold.fact_loan"]
     D --> F
     F --> G["gold.agg_vintage"]
 ```
 
-## Gold star schema
+---
+
+### Step 1: The warehouse
+
+**What:** Amazon Redshift Serverless, database `lending_db`, with two schemas:
+`silver` (the cleaned loans) and `gold` (the star schema for reporting).
+**Why:** Serverless scales by itself and only charges while queries run, with no
+cluster to size or manage.
+
+![Redshift workgroup](images/01_redshift_workgroup.png)
+*The Redshift Serverless workgroup the pipeline loads into.*
+
+---
+
+### Step 2: Design the Gold star schema
 
 | Table | Grain | Key |
 |---|---|---|
@@ -30,21 +42,28 @@ flowchart LR
 | `gold.dim_date` | one row per month | `month_start` |
 | `gold.agg_vintage` | one row per issue month and grade | `issue_month`, `grade` |
 
-`fact_loan` is sorted by `issue_date`, so date filters (reports, and the monthly
-delete of one month) only read the blocks for that month.
+The dimension IDs are IDENTITY columns: Redshift gives each new value the next ID,
+and existing IDs never change. `fact_loan` is sorted by `issue_date`, so date
+filters only read the blocks for the months they need.
 
-## What the job does for each new month
+![Redshift tables](images/04_redshift_tables.png)
+*The `silver` and `gold` schemas: one fact table, five dimensions and one aggregate.*
 
-All steps for one month run in **one transaction**: either every step succeeds,
-or nothing is kept.
+The table definitions are in `sql/redshift/` (01 Silver, 02 dimensions, 03 fact, 04 aggregate).
+
+---
+
+### Step 3: Build the Gold job
+
+**What:** `loans_gold_job.py`, a Glue Python shell job. For each new month it runs,
+in **one transaction** (every step succeeds, or nothing is kept):
 
 1. **silver.loans**: delete the month, then `COPY` it from `processed/issue_month=YYYY-MM/`.
-2. **Dimensions**: insert only values not seen before (`NOT IN` the dimension).
-   The IDENTITY columns give new values the next ID, so existing IDs never change.
+2. **Dimensions**: insert only values not seen before.
 3. **fact_loan**: delete the month, then insert it with the dimension IDs.
-4. **agg_vintage**: delete the month, then recalculate it from the fact table.
+4. **agg_vintage**: delete the month, then recalculate it.
 
-Then the job checks the month and stops if any check fails:
+Then it checks the month and stops if any check fails:
 
 | Check | Expected |
 |---|---|
@@ -53,12 +72,45 @@ Then the job checks the month and stops if any check fails:
 | Fact rows with a missing dimension ID | 0 |
 | Loans counted in `agg_vintage` for the month | equal to the fact table |
 
-The Gold tracker moves forward only after the checks pass. Deleting each month
-before inserting it makes a re-run safe: a month is never loaded twice.
+Deleting each month before inserting it makes a re-run safe: a month is never
+loaded twice. SQL is sent with the Redshift Data API, so the job needs no
+database driver, no VPC connection and no password in the code. It logs in with
+the Redshift admin secret in AWS Secrets Manager.
 
-SQL is sent with the Redshift Data API, so the job needs no database driver,
-no VPC connection and no password in the code. It logs in with the Redshift
-admin secret in AWS Secrets Manager.
+![Gold job details](images/02_gold_job_details.png)
+*A small Python shell job with no VPC connection.*
+
+![Gold job parameters](images/02b_gold_job_parameters.png)
+*The job only receives the workgroup, the database and a pointer to the secret.
+A newer boto3 is installed at start-up for the Redshift Serverless Data API.*
+
+---
+
+### Step 4: Load a new month
+
+**What:** The job loaded December 2018 from S3 processed into Silver and Gold.
+
+![Gold job log](images/03_gold_job_log.png)
+*All 11 statements ran as one transaction. December is complete in Silver, the fact
+table and the aggregate, with no missing dimension IDs. Only then did the tracker move.*
+
+![Table counts](images/05_table_counts.png)
+*Every Silver loan reached the fact table (1,794,323 in both). The dimensions are
+small lookup tables.*
+
+---
+
+### Step 5: Check Gold is ready for reporting
+
+**What:** A test query on `gold.agg_vintage`: bad rate by grade for loans issued in 2015.
+**Why:** To confirm the Gold tables return sensible results before connecting
+the dashboard. Risk should rise from grade A to grade G.
+
+![Gold test query](images/06_gold_query_result.png)
+*The bad rate rises steadily from grade A to grade G, as expected for a credit grade.
+The Gold layer is ready for the dashboard.*
+
+---
 
 ## Test results
 
@@ -76,19 +128,8 @@ admin secret in AWS Secrets Manager.
 | Connection | none (the Redshift Data API is reached over AWS endpoints) |
 | Job parameters | `--workgroup_name`, `--database`, `--secret_arn`, `--additional-python-modules boto3==1.34.162` |
 
-## Problems solved
-
-| Problem | Cause | Fix |
-|---|---|---|
-| Dimension IDs could shift when a new value appeared | IDs were made with `ROW_NUMBER()` on every rebuild | Moved the four ID dimensions to IDENTITY columns and load only new values |
-| `Unknown parameter in input: "WorkgroupName"` | Glue Python shell ships an old boto3 that predates Redshift Serverless | Installed a pinned newer version with `--additional-python-modules` |
-| Redshift COPY failed with a Spectrum Scan Error | `issue_year` was int32 in older files and int64 in the new one | Set the type explicitly in the Silver job |
-| Query editor login failed after enabling Secrets Manager | AWS replaced the admin password with a managed one | Connected the query editor through the secret |
-
 ## Files
 
 | File | Purpose |
 |---|---|
 | `loans_gold_job.py` | Glue job: new months from S3 processed into Redshift Silver and Gold |
-
-The table definitions are in `sql/redshift/` (01 Silver, 02 dimensions, 03 fact, 04 aggregate).

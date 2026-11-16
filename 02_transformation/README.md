@@ -1,6 +1,6 @@
 # 02 Transformation: from S3 raw to S3 processed (Silver)
 
-This stage cleans each new month of raw loans, saves it in S3 as typed Parquet
+This stage cleans each new month of raw loans, saves it in S3 as type Parquet
 (one folder per issue month), and then checks in Athena that every month in raw
 arrived in processed before anything is loaded into the warehouse.
 
