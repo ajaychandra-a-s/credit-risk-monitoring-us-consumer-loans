@@ -117,7 +117,7 @@ The Gold layer is ready for the dashboard.*
 | Situation | Result |
 |---|---|
 | December 2018 loaded by the job on its own | 40,134 rows in Silver, fact and aggregate, no missing IDs, tracker moved to 2018-12 |
-| December 2018 loaded through the Airflow pipeline | Same result, `fact_loan` total unchanged at 1,794,323 (the month was replaced, not added twice) |
+| December 2018 loaded a second time | Same counts, `fact_loan` total unchanged at 1,794,323. The month was replaced, not added twice |
 
 ## Glue job settings
 
