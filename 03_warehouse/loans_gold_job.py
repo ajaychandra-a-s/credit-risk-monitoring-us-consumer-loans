@@ -14,6 +14,10 @@ How it works:
 4. Check the month: fact rows = Silver rows, no missing dimension IDs,
    aggregate total = fact rows.
 5. Move the Gold tracker forward after each month passes its checks.
+6. After all new months: recalculate the two risk summary tables
+   (gold.agg_vintage_curve and gold.agg_grade_monitoring) in one transaction.
+   These are rebuilt in full because every vintage gets one month older each
+   month, so every curve and every monitoring figure can change.
 If there are no new months, nothing is loaded.
 
 Deleting a month before inserting it makes every step safe to re-run:
@@ -123,8 +127,29 @@ def dimension_sql(month):
         FROM {loans}
           AND state NOT IN (SELECT state FROM gold.dim_geography)""",
 
-        f"""INSERT INTO gold.dim_loan_status (loan_status, loan_status_category, is_bad)
-        SELECT DISTINCT loan_status, loan_status_category, is_bad
+        # A new status also gets its DPD bucket (same mapping as sql/redshift/05)
+        f"""INSERT INTO gold.dim_loan_status
+            (loan_status, loan_status_category, is_bad, dpd_bucket, bucket_order, is_active)
+        SELECT DISTINCT loan_status, loan_status_category, is_bad,
+               CASE LOWER(loan_status)
+                   WHEN 'current'            THEN 'Current'
+                   WHEN 'in grace period'    THEN '1-15 DPD'
+                   WHEN 'late (16-30 days)'  THEN '16-30 DPD'
+                   WHEN 'late (31-120 days)' THEN '31-120 DPD'
+                   WHEN 'default'            THEN '120+ DPD'
+                   WHEN 'charged off'        THEN 'Charged off'
+                   WHEN 'fully paid'         THEN 'Closed'
+               END,
+               CASE LOWER(loan_status)
+                   WHEN 'current'            THEN 1
+                   WHEN 'in grace period'    THEN 2
+                   WHEN 'late (16-30 days)'  THEN 3
+                   WHEN 'late (31-120 days)' THEN 4
+                   WHEN 'default'            THEN 5
+                   WHEN 'charged off'        THEN 6
+                   WHEN 'fully paid'         THEN 7
+               END,
+               CASE WHEN LOWER(loan_status) IN ('charged off', 'fully paid') THEN 0 ELSE 1 END
         FROM {loans}
           AND loan_status NOT IN (SELECT loan_status FROM gold.dim_loan_status)""",
 
@@ -219,6 +244,150 @@ def aggregate_sql(month):
     ]
 
 
+# ---------- RISK SUMMARY SQL (full refresh) ----------
+# Same queries as sql/redshift/06 and 07. Rebuilt in full after new months are loaded.
+
+VINTAGE_CURVE_SQL = """
+INSERT INTO gold.agg_vintage_curve
+WITH snap AS (
+    SELECT MAX(last_payment_date) AS snapshot_date FROM gold.fact_loan
+),
+loans AS (
+    SELECT TO_CHAR(f.issue_date, 'YYYY-MM') AS issue_month,
+           g.grade,
+           f.issue_date,
+           f.loan_amount,
+           CASE WHEN s.loan_status_category IN ('charged_off', 'default') THEN 1 ELSE 0 END AS is_chargeoff,
+           DATEDIFF(month, f.issue_date, COALESCE(f.last_payment_date, f.issue_date)) AS chargeoff_mob,
+           f.loan_amount - f.principal_received                AS gross_loss,
+           f.loan_amount - f.principal_received - f.recoveries AS net_loss
+    FROM gold.fact_loan AS f
+    JOIN gold.dim_grade       AS g ON f.grade_id  = g.grade_id
+    JOIN gold.dim_loan_status AS s ON f.status_id = s.status_id
+),
+cohorts AS (
+    SELECT issue_month, grade,
+           MIN(issue_date)  AS start_date,
+           COUNT(*)         AS loans,
+           SUM(loan_amount) AS funded_amount
+    FROM loans
+    GROUP BY 1, 2
+),
+mobs AS (
+    SELECT ROW_NUMBER() OVER (ORDER BY month_start) - 1 AS mob FROM gold.dim_date
+),
+grid AS (
+    SELECT c.issue_month, c.grade, c.loans, c.funded_amount, m.mob
+    FROM cohorts AS c
+    CROSS JOIN mobs AS m
+    CROSS JOIN snap AS sn
+    WHERE m.mob <= DATEDIFF(month, c.start_date, sn.snapshot_date)
+)
+SELECT gr.issue_month,
+       gr.grade,
+       gr.mob,
+       gr.loans,
+       gr.funded_amount,
+       COUNT(l.issue_month),
+       COALESCE(SUM(l.gross_loss), 0),
+       COALESCE(SUM(l.net_loss), 0),
+       COALESCE(SUM(l.gross_loss), 0) / gr.funded_amount * 100
+FROM grid AS gr
+LEFT JOIN loans AS l
+       ON  l.issue_month   = gr.issue_month
+       AND l.grade         = gr.grade
+       AND l.is_chargeoff  = 1
+       AND l.chargeoff_mob <= gr.mob
+GROUP BY gr.issue_month, gr.grade, gr.mob, gr.loans, gr.funded_amount
+"""
+
+GRADE_MONITORING_SQL = """
+INSERT INTO gold.agg_grade_monitoring
+WITH base AS (
+    SELECT TO_CHAR(f.issue_date, 'YYYY-MM') AS issue_month,
+           g.grade,
+           g.sub_grade,
+           COUNT(*)                 AS loans,
+           SUM(f.is_bad)            AS bads,
+           COUNT(*) - SUM(f.is_bad) AS goods
+    FROM gold.fact_loan AS f
+    JOIN gold.dim_grade AS g ON f.grade_id = g.grade_id
+    GROUP BY 1, 2, 3
+),
+totals AS (
+    SELECT issue_month, SUM(loans) AS loans, SUM(bads) AS bads, SUM(goods) AS goods
+    FROM base
+    GROUP BY 1
+),
+cumulative AS (
+    SELECT b.issue_month,
+           b.sub_grade,
+           SUM(b.bads)  OVER (PARTITION BY b.issue_month ORDER BY b.sub_grade DESC ROWS UNBOUNDED PRECEDING)::FLOAT
+               / NULLIF(t.bads, 0)  AS cum_bad,
+           SUM(b.goods) OVER (PARTITION BY b.issue_month ORDER BY b.sub_grade DESC ROWS UNBOUNDED PRECEDING)::FLOAT
+               / NULLIF(t.goods, 0) AS cum_good
+    FROM base AS b
+    JOIN totals AS t ON b.issue_month = t.issue_month
+),
+steps AS (
+    SELECT issue_month, cum_bad, cum_good,
+           COALESCE(LAG(cum_bad)  OVER (PARTITION BY issue_month ORDER BY sub_grade DESC), 0) AS prev_bad,
+           COALESCE(LAG(cum_good) OVER (PARTITION BY issue_month ORDER BY sub_grade DESC), 0) AS prev_good
+    FROM cumulative
+),
+ks_gini AS (
+    SELECT issue_month,
+           MAX(ABS(cum_bad - cum_good)) * 100                             AS ks,
+           2 * SUM((cum_good - prev_good) * (cum_bad + prev_bad) / 2) - 1 AS gini
+    FROM steps
+    GROUP BY 1
+),
+grade_mix AS (
+    SELECT b.issue_month, b.grade, SUM(b.loans)::FLOAT / t.loans AS share
+    FROM base AS b
+    JOIN totals AS t ON b.issue_month = t.issue_month
+    GROUP BY b.issue_month, b.grade, t.loans
+),
+baseline AS (
+    SELECT grade, SUM(loans)::FLOAT / (SELECT SUM(loans) FROM base WHERE issue_month LIKE '2015-%') AS share
+    FROM base
+    WHERE issue_month LIKE '2015-%'
+    GROUP BY 1
+),
+psi AS (
+    SELECT m.issue_month,
+           SUM( (GREATEST(m.share, 0.0001) - GREATEST(b.share, 0.0001))
+                * LN(GREATEST(m.share, 0.0001) / GREATEST(b.share, 0.0001)) ) AS psi
+    FROM grade_mix AS m
+    JOIN baseline AS b ON m.grade = b.grade
+    GROUP BY 1
+)
+SELECT t.issue_month,
+       t.loans,
+       t.bads,
+       CAST(t.bads::FLOAT / t.loans * 100 AS DECIMAL(5,2)),
+       CAST(k.ks AS DECIMAL(5,2)),
+       CAST(k.gini AS DECIMAL(5,3)),
+       CAST(p.psi AS DECIMAL(6,4)),
+       CASE WHEN p.psi < 0.10 THEN 'Stable'
+            WHEN p.psi < 0.25 THEN 'Monitor'
+            ELSE 'Shift' END
+FROM totals AS t
+JOIN ks_gini AS k ON t.issue_month = k.issue_month
+JOIN psi     AS p ON t.issue_month = p.issue_month
+"""
+
+
+def summary_sql():
+    """Rebuild both risk summary tables. DELETE (not TRUNCATE) so it stays inside the transaction."""
+    return [
+        "DELETE FROM gold.agg_vintage_curve",
+        VINTAGE_CURVE_SQL,
+        "DELETE FROM gold.agg_grade_monitoring",
+        GRADE_MONITORING_SQL,
+    ]
+
+
 # ---------- REDSHIFT DATA API ----------
 def wait_for(statement_id):
     """Wait until a Data API statement finishes. Stop the job with the error if it fails."""
@@ -281,6 +450,22 @@ def check_month(conn, month):
     print(f"[check_month] {month}: OK, {fact_rows:,} rows in silver, fact and aggregate, no missing IDs")
 
 
+def refresh_summaries(conn):
+    """Rebuild the risk summary tables, then check them."""
+    run_batch(conn, summary_sql(), "risk summaries")
+
+    fact_months = query_value(conn, "SELECT COUNT(DISTINCT TO_CHAR(issue_date, 'YYYY-MM')) FROM gold.fact_loan")
+    monitoring_rows = query_value(conn, "SELECT COUNT(*) FROM gold.agg_grade_monitoring")
+    curve_months = query_value(conn, "SELECT COUNT(DISTINCT issue_month) FROM gold.agg_vintage_curve")
+
+    if monitoring_rows != fact_months:
+        raise RuntimeError(f"agg_grade_monitoring has {monitoring_rows} rows, fact_loan has {fact_months} months")
+    if curve_months != fact_months:
+        raise RuntimeError(f"agg_vintage_curve covers {curve_months} months, fact_loan has {fact_months}")
+
+    print(f"[refresh_summaries] OK, both summary tables cover all {fact_months} months")
+
+
 # ---------- MAIN ----------
 def main():
     # Glue passes job parameters on the command line, e.g. --workgroup_name lending-wg
@@ -305,6 +490,8 @@ def main():
         load_month(conn, month)
         check_month(conn, month)
         update_tracker(GOLD_TRACKER_KEY, month)   # only after the month passed its checks
+
+    refresh_summaries(conn)
 
 
 if __name__ == "__main__":
