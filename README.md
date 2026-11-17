@@ -85,8 +85,15 @@ missed run is picked up automatically on the next run.
 The Gold layer is a star schema with one fact table, `gold.fact_loan` (one row per
 loan), and five dimensions: grade, purpose, geography, loan status and date. The
 dimension IDs are IDENTITY columns, so existing IDs never change when new values
-arrive. `gold.agg_vintage` is a summary table built from the fact table (one row
-per issue month and grade) for the vintage report.
+arrive. The loan status dimension also holds the DPD bucket of each status.
+
+Three summary tables are built from the fact table for the credit risk report:
+
+| Table | What it holds |
+|---|---|
+| `gold.agg_vintage` | Loans, funded amount and bad rate per issue month and grade |
+| `gold.agg_vintage_curve` | Cumulative charge-off by month on book, per vintage and grade (static pool) |
+| `gold.agg_grade_monitoring` | KS, Gini and PSI of the Lending Club grade per vintage |
 
 The diagram shows the keys and main measures. The full column lists are in
 [`sql/redshift/`](sql/redshift/).
@@ -147,7 +154,9 @@ Details: [`02_transformation`](02_transformation/)
 `loans_gold_job` copies the new month into `silver.loans`, adds any new dimension
 values, and replaces that month in `gold.fact_loan` and `gold.agg_vintage`. All 11
 statements run in one transaction, then 4 checks confirm the counts match before
-the tracker moves. Loading the same month twice gives the same result.
+the tracker moves. Loading the same month twice gives the same result. Finally it
+rebuilds the credit risk summaries: the vintage charge-off curves and the KS, Gini
+and PSI monitoring of the grade.
 
 ![Table counts](03_warehouse/images/05_table_counts.png)
 

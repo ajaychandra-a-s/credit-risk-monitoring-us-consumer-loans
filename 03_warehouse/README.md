@@ -38,9 +38,11 @@ cluster to size or manage.
 | `gold.dim_grade` | one row per grade and sub-grade (A1 to G5) | `grade_id` (IDENTITY) |
 | `gold.dim_purpose` | one row per loan purpose | `purpose_id` (IDENTITY) |
 | `gold.dim_geography` | one row per borrower state | `geography_id` (IDENTITY) |
-| `gold.dim_loan_status` | one row per loan status, with category and `is_bad` | `status_id` (IDENTITY) |
+| `gold.dim_loan_status` | one row per loan status, with category, `is_bad`, DPD bucket and `is_active` | `status_id` (IDENTITY) |
 | `gold.dim_date` | one row per month | `month_start` |
 | `gold.agg_vintage` | one row per issue month and grade | `issue_month`, `grade` |
+| `gold.agg_vintage_curve` | one row per issue month, grade and month on book | `issue_month`, `grade`, `mob` |
+| `gold.agg_grade_monitoring` | one row per issue month: KS, Gini and PSI of the grade | `issue_month` |
 
 The dimension IDs are IDENTITY columns: Redshift gives each new value the next ID,
 and existing IDs never change. `fact_loan` is sorted by `issue_date`, so date
@@ -49,7 +51,8 @@ filters only read the blocks for the months they need.
 ![Redshift tables](images/04_redshift_tables.png)
 *The `silver` and `gold` schemas: one fact table, five dimensions and one aggregate.*
 
-The table definitions are in `sql/redshift/` (01 Silver, 02 dimensions, 03 fact, 04 aggregate).
+The table definitions are in `sql/redshift/` (01 Silver, 02 dimensions, 03 fact,
+04 aggregate, 05 DPD buckets, 06 vintage curve, 07 grade monitoring).
 
 ---
 
@@ -73,7 +76,13 @@ Then it checks the month and stops if any check fails:
 | Loans counted in `agg_vintage` for the month | equal to the fact table |
 
 Deleting each month before inserting it makes a re-run safe: a month is never
-loaded twice. SQL is sent with the Redshift Data API, so the job needs no
+loaded twice.
+
+After the new months, the job rebuilds the two risk summary tables
+(`agg_vintage_curve` and `agg_grade_monitoring`) in one more transaction and checks
+they cover every month. These are rebuilt in full because every vintage gets one
+month older each month, so every curve and monitoring figure can change. They are
+small and are recalculated in seconds from the incremental fact table. SQL is sent with the Redshift Data API, so the job needs no
 database driver, no VPC connection and no password in the code. It logs in with
 the Redshift admin secret in AWS Secrets Manager.
 
@@ -112,12 +121,44 @@ The Gold layer is ready for the dashboard.*
 
 ---
 
+### Step 6: Build the credit risk tables
+
+**What:** Three additions for the credit risk report:
+1. **DPD buckets** on `dim_loan_status` (Current, 1-15, 16-30, 31-120, 120+ DPD,
+   Charged off, Closed) plus `is_active`, for the 30+ DPD rate.
+2. **`agg_vintage_curve`**: the share of funded money charged off by each month on
+   book, for every vintage and grade (static pool view).
+3. **`agg_grade_monitoring`**: KS, Gini and PSI of the Lending Club grade for every
+   vintage, against a 2015 baseline.
+
+**Why:** These are the measures a credit risk team tracks every month. Computing
+them in the warehouse means every report uses the same definitions, and the
+dashboard only displays them.
+
+**Definitions:**
+- A charged-off loan has the status Charged off or Default. Its month on book is
+  taken from its last payment, because the data has no monthly history.
+- Gross charge-off = loan amount minus principal received. Net charge-off also
+  subtracts recoveries.
+- PSI below 0.10 is stable, 0.10 to 0.25 needs monitoring, above 0.25 is a shift.
+
+![Vintage curve check](images/07_vintage_curve.png)
+*For the January 2015 vintage, grade A lost about 2.4% of funded money and flattened
+after month 36, when its 36-month loans finished. Grade G passed 36%.*
+
+![Grade monitoring](images/08_grade_monitoring.png)
+*One row per vintage. KS stays around 26 to 30 and Gini around 0.37 to 0.40, so the
+grade still ranks risk consistently. PSI shows how far the grade mix has moved from 2015.*
+
+---
+
 ## Test results
 
 | Situation | Result |
 |---|---|
 | December 2018 loaded by the job on its own | 40,134 rows in Silver, fact and aggregate, no missing IDs, tracker moved to 2018-12 |
 | December 2018 loaded a second time | Same counts, `fact_loan` total unchanged at 1,794,323. The month was replaced, not added twice |
+| Risk summaries rebuilt by the job | `agg_vintage_curve` 8,904 rows and `agg_grade_monitoring` 48 rows, the same as the first build |
 
 ## Glue job settings
 
