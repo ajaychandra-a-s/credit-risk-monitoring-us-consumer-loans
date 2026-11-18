@@ -1,11 +1,13 @@
-# Lending Club Loan Data Pipeline on AWS
+# Credit Risk Monitoring of a US Consumer Loan Portfolio, 2015 to 2018 Vintages
 
 ## Objective
 
-This project builds a monthly batch pipeline for consumer loan data on AWS. Each
-month, new loans are pulled from the operational MySQL database, cleaned and
-checked, and loaded into a Redshift star schema that a Power BI dashboard reads
-for credit risk reporting (bad rates and vintage performance by grade).
+This project builds the monthly credit risk reporting for a US consumer loan
+portfolio of 1.79M unsecured personal loans issued from 2015 to 2018. Each month,
+new loans are pulled from the operational MySQL database, cleaned and checked on
+AWS, and loaded into a Redshift star schema. A Power BI report then covers the
+questions a credit risk team tracks: vintage (static pool) losses, delinquency by
+DPD bucket, and monitoring of the risk grade with KS, Gini and PSI.
 
 The pipeline is **incremental**: each run loads only the new month, and every
 stage can be re-run safely without duplicating data. It follows the **medallion
