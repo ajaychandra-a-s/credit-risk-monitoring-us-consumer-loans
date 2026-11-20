@@ -1,0 +1,62 @@
+{
+  "name": "Credit Risk Monitor",
+  "dataColors": ["#38624D", "#5F7F3B", "#899878", "#CDCF89", "#F0AC60", "#D87B43", "#DA3D4D", "#222725", "#C86843", "#787878"],
+  "background": "#FCFCFA",
+  "secondaryBackground": "#F7F7F2",
+  "foreground": "#444444",
+  "foregroundNeutralSecondary": "#5E5E5E",
+  "tableAccent": "#899878",
+  "good": "#38624D",
+  "neutral": "#F0AC60",
+  "bad": "#DA3D4D",
+  "maximum": "#DA3D4D",
+  "center": "#F0AC60",
+  "minimum": "#F7F7F2",
+  "textClasses": {
+    "callout": { "fontFace": "Segoe UI Bold", "fontSize": 24, "color": "#444444" },
+    "title": { "fontFace": "Segoe UI Semibold", "fontSize": 14, "color": "#C86843" },
+    "header": { "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": "#444444" },
+    "label": { "fontFace": "Segoe UI", "fontSize": 11, "color": "#5E5E5E" }
+  },
+  "visualStyles": {
+    "page": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#F7F7F2" } }, "transparency": 0 }],
+        "outspace": [{ "color": { "solid": { "color": "#F7F7F2" } } }]
+      }
+    },
+    "*": {
+      "*": {
+        "background": [{ "show": true, "color": { "solid": { "color": "#FCFCFA" } }, "transparency": 0 }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#BFBFBF" } }, "radius": 10 }],
+        "dropShadow": [{ "show": true, "preset": "BottomRight" }],
+        "title": [{ "show": true, "fontColor": { "solid": { "color": "#C86843" } }, "fontFamily": "Segoe UI Semibold", "fontSize": 14 }],
+        "visualHeader": [{ "show": false }]
+      }
+    },
+    "pivotTable": {
+      "*": {
+        "columnHeaders": [{ "fontColor": { "solid": { "color": "#444444" } }, "fontFamily": "Segoe UI Semibold", "fontSize": 12 }],
+        "rowHeaders": [{ "fontColor": { "solid": { "color": "#444444" } }, "fontFamily": "Segoe UI Semibold", "fontSize": 12 }],
+        "values": [{ "fontColorPrimary": { "solid": { "color": "#5E5E5E" } }, "backColorSecondary": { "solid": { "color": "#F0F0F0" } }, "fontSize": 12 }]
+      }
+    },
+    "tableEx": {
+      "*": {
+        "columnHeaders": [{ "fontColor": { "solid": { "color": "#444444" } }, "fontFamily": "Segoe UI Semibold", "fontSize": 12 }],
+        "values": [{ "fontColorPrimary": { "solid": { "color": "#5E5E5E" } }, "backColorSecondary": { "solid": { "color": "#F0F0F0" } }, "fontSize": 12 }]
+      }
+    },
+    "slicer": {
+      "*": {
+        "background": [{ "show": true, "color": { "solid": { "color": "#E4E6C3" } } }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#222725" } }, "radius": 22 }],
+        "dropShadow": [{ "show": false }],
+        "items": [{ "fontColor": { "solid": { "color": "#121113" } }, "fontFamily": "Segoe UI", "textSize": 12 }]
+      }
+    },
+    "shape": { "*": { "dropShadow": [{ "show": false }], "border": [{ "show": false }], "background": [{ "show": false }] } },
+    "actionButton": { "*": { "dropShadow": [{ "show": false }], "border": [{ "show": false }], "background": [{ "show": false }] } },
+    "textbox": { "*": { "dropShadow": [{ "show": false }], "border": [{ "show": false }], "background": [{ "show": false }] } }
+  }
+}

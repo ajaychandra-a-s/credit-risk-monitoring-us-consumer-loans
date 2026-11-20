@@ -1,0 +1,91 @@
+table agg_vintage
+	lineageTag: 62d37771-de00-4f2c-bb8c-91a771e475a7
+
+	column issue_month
+		dataType: string
+		lineageTag: b3833ae4-ae49-457b-bd4e-957ba606f9cf
+		summarizeBy: none
+		sourceColumn: issue_month
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column grade
+		dataType: string
+		lineageTag: e4b463ae-0c12-438d-85cb-142c4c2048d2
+		summarizeBy: none
+		sourceColumn: grade
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column loans
+		dataType: int64
+		formatString: 0
+		lineageTag: d2eb24c6-68c5-49a4-8f02-cb6a3a6e3439
+		summarizeBy: sum
+		sourceColumn: loans
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column funded_amount
+		dataType: double
+		lineageTag: afe97828-ddca-483a-bb08-243ecfa69322
+		summarizeBy: sum
+		sourceColumn: funded_amount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column bad_loans
+		dataType: int64
+		formatString: 0
+		lineageTag: f847c9bf-d15d-49de-a7bf-469c7c4ba6a1
+		summarizeBy: sum
+		sourceColumn: bad_loans
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column bad_rate_pct
+		dataType: double
+		lineageTag: 33ea0748-a9d2-4ebb-8737-79cd399fb429
+		summarizeBy: sum
+		sourceColumn: bad_rate_pct
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avg_interest_rate
+		dataType: double
+		lineageTag: 1a3f9f68-ee88-4d93-9a9b-642673b09572
+		summarizeBy: sum
+		sourceColumn: avg_interest_rate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition agg_vintage = m
+		mode: import
+		source =
+				let
+				  Source = AmazonRedshift.Database("lending-workgroup.945032905648.eu-north-1.redshift-serverless.amazonaws.com", "lending_db", [ProviderName = null, BatchSize = null]),
+				  #"Navigation 1" = Source{[Name = "gold"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "agg_vintage"]}[Data]
+				in
+				  #"Navigation 2"
+

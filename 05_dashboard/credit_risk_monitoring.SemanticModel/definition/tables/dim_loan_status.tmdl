@@ -1,0 +1,88 @@
+table dim_loan_status
+	lineageTag: 9b270c2b-1693-4bfb-94ce-785047aa558c
+
+	column status_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 3f76af12-1d8f-464a-976d-6b5b3b68fe65
+		summarizeBy: sum
+		sourceColumn: status_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column loan_status
+		dataType: string
+		lineageTag: 4b508aef-0643-400b-95e9-9fe3fbbd9c10
+		summarizeBy: none
+		sourceColumn: loan_status
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column loan_status_category
+		dataType: string
+		lineageTag: 63ff2b09-807d-42e3-8fae-9e6e66ccf18a
+		summarizeBy: none
+		sourceColumn: loan_status_category
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_bad
+		dataType: int64
+		formatString: 0
+		lineageTag: 4f63492c-ad62-4ef6-b823-c17b30467056
+		summarizeBy: sum
+		sourceColumn: is_bad
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column dpd_bucket
+		dataType: string
+		lineageTag: fd61e5b1-b6a4-48e8-a580-b130de5eb15a
+		summarizeBy: none
+		sourceColumn: dpd_bucket
+		sortByColumn: bucket_order
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column bucket_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 6d7a8168-78e6-4fd8-a6e3-18742522ddaa
+		summarizeBy: sum
+		sourceColumn: bucket_order
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_active
+		dataType: int64
+		formatString: 0
+		lineageTag: 40b28f14-dcdd-48d4-a6c1-788dfa98a6fd
+		summarizeBy: sum
+		sourceColumn: is_active
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_loan_status = m
+		mode: import
+		source =
+				let
+				  Source = AmazonRedshift.Database("lending-workgroup.945032905648.eu-north-1.redshift-serverless.amazonaws.com", "lending_db", [ProviderName = null, BatchSize = null]),
+				  #"Navigation 1" = Source{[Name = "gold"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "dim_loan_status"]}[Data]
+				in
+				  #"Navigation 2"
+

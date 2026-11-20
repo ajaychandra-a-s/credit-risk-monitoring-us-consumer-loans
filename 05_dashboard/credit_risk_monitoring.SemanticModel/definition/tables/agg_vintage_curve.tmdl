@@ -1,0 +1,114 @@
+table agg_vintage_curve
+	lineageTag: cfc9665d-1285-48e3-a276-0b937a260318
+
+	column issue_month
+		dataType: string
+		lineageTag: 97ac78bf-9b3d-4b16-ab06-4f62071149db
+		summarizeBy: none
+		sourceColumn: issue_month
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column grade
+		dataType: string
+		lineageTag: eb64519b-5a4d-4bff-9fcd-c2320ea27bd2
+		summarizeBy: none
+		sourceColumn: grade
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column mob
+		dataType: int64
+		formatString: 0
+		lineageTag: 45ccd5a6-76e7-4161-9c7c-e77c41aed7ea
+		summarizeBy: sum
+		sourceColumn: mob
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column loans
+		dataType: int64
+		formatString: 0
+		lineageTag: c4421c99-381e-4198-b67f-685b3a8c196d
+		summarizeBy: sum
+		sourceColumn: loans
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column funded_amount
+		dataType: double
+		lineageTag: b757a911-db50-4142-80c4-8a8770edbe51
+		summarizeBy: sum
+		sourceColumn: funded_amount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column chargeoff_loans
+		dataType: int64
+		formatString: 0
+		lineageTag: 12776ffc-0841-4662-bf50-bcef3f179851
+		summarizeBy: sum
+		sourceColumn: chargeoff_loans
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column gross_chargeoff_amount
+		dataType: double
+		lineageTag: 7efb84f0-a68b-4da5-887d-5e225f94b8c2
+		summarizeBy: sum
+		sourceColumn: gross_chargeoff_amount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column net_chargeoff_amount
+		dataType: double
+		lineageTag: 96958933-b4f9-45b1-b82f-d26eb79d2cf6
+		summarizeBy: sum
+		sourceColumn: net_chargeoff_amount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column cum_gross_chargeoff_pct
+		dataType: double
+		lineageTag: 5d110a1d-02ba-452a-b8eb-c53f55611195
+		summarizeBy: sum
+		sourceColumn: cum_gross_chargeoff_pct
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition agg_vintage_curve = m
+		mode: import
+		source =
+				let
+				  Source = AmazonRedshift.Database("lending-workgroup.945032905648.eu-north-1.redshift-serverless.amazonaws.com", "lending_db", [ProviderName = null, BatchSize = null]),
+				  #"Navigation 1" = Source{[Name = "gold"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "agg_vintage_curve"]}[Data]
+				in
+				  #"Navigation 2"
+

@@ -1,0 +1,82 @@
+table dim_date
+	lineageTag: 12ef93a4-7028-4eb8-9db9-e6c90e2386ee
+	dataCategory: Time
+
+	column month_start
+		dataType: dateTime
+		isUnique
+		formatString: Long Date
+		lineageTag: e5a8b261-97bc-4a68-9c30-6e89007934b6
+		summarizeBy: none
+		sourceColumn: month_start
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 4055aadb-820e-4375-89a8-293c05829273
+		summarizeBy: sum
+		sourceColumn: year
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: af065487-7a51-4195-be0c-771bca96d26a
+		summarizeBy: sum
+		sourceColumn: quarter
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 0d7f2549-77d8-4c39-8f5d-316b83f2b5b0
+		summarizeBy: sum
+		sourceColumn: month_num
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: 3eb7340b-bd9a-4464-9a94-ffd03e9f10e5
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: month_num
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_month
+		dataType: string
+		lineageTag: 04b1af70-83bb-4ae0-a133-468db8fec6e7
+		summarizeBy: none
+		sourceColumn: year_month
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = m
+		mode: import
+		source =
+				let
+				  Source = AmazonRedshift.Database("lending-workgroup.945032905648.eu-north-1.redshift-serverless.amazonaws.com", "lending_db", [ProviderName = null, BatchSize = null]),
+				  #"Navigation 1" = Source{[Name = "gold"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "dim_date"]}[Data]
+				in
+				  #"Navigation 2"
+

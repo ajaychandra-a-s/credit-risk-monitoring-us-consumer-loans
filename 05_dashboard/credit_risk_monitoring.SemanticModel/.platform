@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "credit_risk_monitoring"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "93d93812-878d-40c3-a9c5-e883efdda9a5"
+  }
+}

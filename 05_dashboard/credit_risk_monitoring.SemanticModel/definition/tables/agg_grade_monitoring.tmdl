@@ -1,0 +1,103 @@
+table agg_grade_monitoring
+	lineageTag: ef5a628c-7cd1-4e93-a8fe-82e4f0403e65
+
+	column issue_month
+		dataType: string
+		lineageTag: fe9e31e7-04e3-43d9-bfde-264e60bfbf30
+		summarizeBy: none
+		sourceColumn: issue_month
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column loans
+		dataType: int64
+		formatString: 0
+		lineageTag: 43bf8ad0-9271-4aa5-9c2f-2f9be0f1c742
+		summarizeBy: sum
+		sourceColumn: loans
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column bad_loans
+		dataType: int64
+		formatString: 0
+		lineageTag: 42f19357-21cd-40ed-b867-5d59e67b3a77
+		summarizeBy: sum
+		sourceColumn: bad_loans
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column bad_rate_pct
+		dataType: double
+		lineageTag: 46014c7a-410b-4154-90d4-db5472b173bd
+		summarizeBy: sum
+		sourceColumn: bad_rate_pct
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ks
+		dataType: double
+		lineageTag: e78c3080-ba85-42ec-8757-e9169fdb6290
+		summarizeBy: sum
+		sourceColumn: ks
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gini
+		dataType: double
+		lineageTag: b44c48a1-234e-42ad-b919-30ff71062631
+		summarizeBy: sum
+		sourceColumn: gini
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column psi
+		dataType: double
+		lineageTag: d46d90b4-7d66-471b-bc2b-a92b45370354
+		summarizeBy: sum
+		sourceColumn: psi
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column psi_status
+		dataType: string
+		lineageTag: 7db23d73-5586-4400-ae76-857a3c430d43
+		summarizeBy: none
+		sourceColumn: psi_status
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition agg_grade_monitoring = m
+		mode: import
+		source =
+				let
+				  Source = AmazonRedshift.Database("lending-workgroup.945032905648.eu-north-1.redshift-serverless.amazonaws.com", "lending_db", [ProviderName = null, BatchSize = null]),
+				  #"Navigation 1" = Source{[Name = "gold"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "agg_grade_monitoring"]}[Data]
+				in
+				  #"Navigation 2"
+

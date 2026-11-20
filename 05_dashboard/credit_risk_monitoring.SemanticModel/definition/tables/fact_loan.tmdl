@@ -1,0 +1,312 @@
+table fact_loan
+	lineageTag: b22b387b-dd99-4c69-bdbe-76f42cc4871a
+
+	column loan_key
+		dataType: string
+		lineageTag: 5e579e0e-3667-4fb8-88d5-08cbababcf7a
+		summarizeBy: none
+		sourceColumn: loan_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column grade_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 64557e0e-d4c3-45c9-b3a9-57da79539071
+		summarizeBy: sum
+		sourceColumn: grade_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column purpose_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 2bf9a907-8fdd-4d82-8506-b791df31d9b6
+		summarizeBy: sum
+		sourceColumn: purpose_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column geography_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 9b3e2e32-c656-4405-a7c2-9b6f04b10112
+		summarizeBy: sum
+		sourceColumn: geography_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column status_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 67f184bf-90c2-4138-900e-59e24abaf0cc
+		summarizeBy: sum
+		sourceColumn: status_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column issue_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b9fd30b6-a959-49af-84ae-e31a65867a3b
+		summarizeBy: none
+		sourceColumn: issue_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column last_payment_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ec04c783-d2c9-4c50-9a5b-944483103352
+		summarizeBy: none
+		sourceColumn: last_payment_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column term_months
+		dataType: int64
+		formatString: 0
+		lineageTag: 51328ac3-487f-4303-97b1-f53f04163e9a
+		summarizeBy: sum
+		sourceColumn: term_months
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column loan_amount
+		dataType: double
+		lineageTag: a9d0c569-6fe6-4b10-aa95-d8512d8d3379
+		summarizeBy: sum
+		sourceColumn: loan_amount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column installment
+		dataType: double
+		lineageTag: d3905893-d2ed-4ef2-a5f6-238321a97276
+		summarizeBy: sum
+		sourceColumn: installment
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column interest_rate
+		dataType: double
+		lineageTag: fef56cb4-1dcd-478b-9b7a-01175bc09ac4
+		summarizeBy: sum
+		sourceColumn: interest_rate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column annual_income
+		dataType: double
+		lineageTag: 0bc9a15d-b5cc-4611-801c-57ee6fabe3b0
+		summarizeBy: sum
+		sourceColumn: annual_income
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column employment_length_years
+		dataType: int64
+		formatString: 0
+		lineageTag: fdc7c611-b5c8-431e-a497-0ec875cce851
+		summarizeBy: sum
+		sourceColumn: employment_length_years
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column home_ownership
+		dataType: string
+		lineageTag: 4889f26e-2031-470c-86a9-0b0587079b5f
+		summarizeBy: none
+		sourceColumn: home_ownership
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column verification_status
+		dataType: string
+		lineageTag: 90934f3b-c3ec-4e96-a2c0-e69389b6368a
+		summarizeBy: none
+		sourceColumn: verification_status
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column dti
+		dataType: double
+		lineageTag: 3d077277-c541-4ec8-9821-d9b26523d6e3
+		summarizeBy: sum
+		sourceColumn: dti
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column revolving_balance
+		dataType: double
+		lineageTag: d6019a08-d341-408f-8203-7378bcd3f805
+		summarizeBy: sum
+		sourceColumn: revolving_balance
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column revolving_utilization
+		dataType: double
+		lineageTag: fa09fce6-c1bc-47c5-b30e-23720f171f35
+		summarizeBy: sum
+		sourceColumn: revolving_utilization
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column outstanding_principal
+		dataType: double
+		lineageTag: af4d244d-be4d-4250-8f5e-546e318c466d
+		summarizeBy: sum
+		sourceColumn: outstanding_principal
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column total_payment
+		dataType: double
+		lineageTag: 0a2c8c39-21c4-430c-aa92-e635de8049b3
+		summarizeBy: sum
+		sourceColumn: total_payment
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column principal_received
+		dataType: double
+		lineageTag: 13cd9c35-929f-45fb-82ee-c9cfce55cffb
+		summarizeBy: sum
+		sourceColumn: principal_received
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column interest_received
+		dataType: double
+		lineageTag: 2803a0b6-7b8e-4534-85da-bdb2174af93f
+		summarizeBy: sum
+		sourceColumn: interest_received
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column recoveries
+		dataType: double
+		lineageTag: b72577c2-71c2-49b3-aee6-1d8f42f14e6b
+		summarizeBy: sum
+		sourceColumn: recoveries
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column is_bad
+		dataType: int64
+		formatString: 0
+		lineageTag: 8082cee4-76e2-4b7e-a16d-5a18069bd3d9
+		summarizeBy: sum
+		sourceColumn: is_bad
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column flag_zero_income
+		dataType: int64
+		formatString: 0
+		lineageTag: d4c36e5f-2cb3-4be6-836f-a29eb732594a
+		summarizeBy: sum
+		sourceColumn: flag_zero_income
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column flag_revol_util_over_100
+		dataType: int64
+		formatString: 0
+		lineageTag: efa19647-beac-4150-bf7b-1002d8635b43
+		summarizeBy: sum
+		sourceColumn: flag_revol_util_over_100
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_loan = m
+		mode: import
+		source =
+				let
+				  Source = AmazonRedshift.Database("lending-workgroup.945032905648.eu-north-1.redshift-serverless.amazonaws.com", "lending_db", [ProviderName = null, BatchSize = null]),
+				  #"Navigation 1" = Source{[Name = "gold"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "fact_loan"]}[Data]
+				in
+				  #"Navigation 2"
+

@@ -1,0 +1,34 @@
+table dim_geography
+	lineageTag: eab4970d-33cf-42ad-9d05-4f2c84faefb8
+
+	column geography_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 30fc3360-2618-4075-be4f-67fef1e25dca
+		summarizeBy: sum
+		sourceColumn: geography_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: cd273875-6150-4bc6-91b5-1814ac9b20aa
+		summarizeBy: none
+		sourceColumn: state
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_geography = m
+		mode: import
+		source =
+				let
+				  Source = AmazonRedshift.Database("lending-workgroup.945032905648.eu-north-1.redshift-serverless.amazonaws.com", "lending_db", [ProviderName = null, BatchSize = null]),
+				  #"Navigation 1" = Source{[Name = "gold"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "dim_geography"]}[Data]
+				in
+				  #"Navigation 2"
+

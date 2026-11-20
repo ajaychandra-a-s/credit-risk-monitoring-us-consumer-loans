@@ -1,0 +1,44 @@
+table dim_grade
+	lineageTag: f3f65eb1-660e-4f8b-8b28-5946df1d57ef
+
+	column grade_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 73bab659-0b41-4cd2-bd6d-ff18e67c7d60
+		summarizeBy: sum
+		sourceColumn: grade_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column grade
+		dataType: string
+		lineageTag: 16ba39ff-d8e1-405b-bae4-24375ab7efe4
+		summarizeBy: none
+		sourceColumn: grade
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column sub_grade
+		dataType: string
+		lineageTag: f54c29fb-9a25-47c3-91c9-409df2b9a1b5
+		summarizeBy: none
+		sourceColumn: sub_grade
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_grade = m
+		mode: import
+		source =
+				let
+				  Source = AmazonRedshift.Database("lending-workgroup.945032905648.eu-north-1.redshift-serverless.amazonaws.com", "lending_db", [ProviderName = null, BatchSize = null]),
+				  #"Navigation 1" = Source{[Name = "gold"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "dim_grade"]}[Data]
+				in
+				  #"Navigation 2"
+
