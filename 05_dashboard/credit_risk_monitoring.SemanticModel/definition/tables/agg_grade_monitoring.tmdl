@@ -101,3 +101,5 @@ table agg_grade_monitoring
 				in
 				  #"Navigation 2"
 
+	annotation PBI_ResultType = Table
+

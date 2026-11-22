@@ -112,3 +112,5 @@ table agg_vintage_curve
 				in
 				  #"Navigation 2"
 
+	annotation PBI_ResultType = Table
+

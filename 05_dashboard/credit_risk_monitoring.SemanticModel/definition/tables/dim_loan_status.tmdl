@@ -5,7 +5,7 @@ table dim_loan_status
 		dataType: int64
 		formatString: 0
 		lineageTag: 3f76af12-1d8f-464a-976d-6b5b3b68fe65
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: status_id
 
 		changedProperty = IsHidden
@@ -36,7 +36,7 @@ table dim_loan_status
 		dataType: int64
 		formatString: 0
 		lineageTag: 4f63492c-ad62-4ef6-b823-c17b30467056
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: is_bad
 
 		changedProperty = IsHidden
@@ -58,7 +58,7 @@ table dim_loan_status
 		dataType: int64
 		formatString: 0
 		lineageTag: 6d7a8168-78e6-4fd8-a6e3-18742522ddaa
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: bucket_order
 
 		changedProperty = IsHidden
@@ -69,7 +69,7 @@ table dim_loan_status
 		dataType: int64
 		formatString: 0
 		lineageTag: 40b28f14-dcdd-48d4-a6c1-788dfa98a6fd
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: is_active
 
 		changedProperty = IsHidden
@@ -85,4 +85,6 @@ table dim_loan_status
 				  #"Navigation 2" = #"Navigation 1"{[Name = "dim_loan_status"]}[Data]
 				in
 				  #"Navigation 2"
+
+	annotation PBI_ResultType = Table
 

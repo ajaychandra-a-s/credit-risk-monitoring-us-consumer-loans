@@ -5,7 +5,7 @@ table dim_geography
 		dataType: int64
 		formatString: 0
 		lineageTag: 30fc3360-2618-4075-be4f-67fef1e25dca
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: geography_id
 
 		changedProperty = IsHidden
@@ -31,4 +31,6 @@ table dim_geography
 				  #"Navigation 2" = #"Navigation 1"{[Name = "dim_geography"]}[Data]
 				in
 				  #"Navigation 2"
+
+	annotation PBI_ResultType = Table
 

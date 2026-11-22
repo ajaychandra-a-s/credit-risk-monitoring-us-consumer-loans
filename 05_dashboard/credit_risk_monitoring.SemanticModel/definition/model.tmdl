@@ -1,7 +1,7 @@
 model Model
 	culture: en-GB
 	defaultPowerBIDataSourceVersion: powerBI_V3
-	sourceQueryCulture: en-IN
+	sourceQueryCulture: en-US
 	valueFilterBehavior: independent
 	dataAccessOptions
 		legacyRedirects
@@ -11,7 +11,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode","MCP-PBIModeling"]
 
-annotation PBI_QueryOrder = ["agg_grade_monitoring","agg_vintage","agg_vintage_curve","dim_date","dim_geography","dim_grade","dim_loan_status","dim_purpose","fact_loan"]
+annotation PBI_QueryOrder = ["agg_grade_monitoring","agg_vintage","agg_vintage_curve","dim_date","dim_geography","dim_grade","dim_loan_status","dim_purpose","fact_loan","_Measures"]
 
 ref table agg_grade_monitoring
 ref table agg_vintage
@@ -22,6 +22,7 @@ ref table dim_grade
 ref table dim_loan_status
 ref table dim_purpose
 ref table fact_loan
+ref table _Measures
 
 ref cultureInfo en-GB
 

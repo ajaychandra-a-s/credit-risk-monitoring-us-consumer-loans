@@ -89,3 +89,5 @@ table agg_vintage
 				in
 				  #"Navigation 2"
 
+	annotation PBI_ResultType = Table
+

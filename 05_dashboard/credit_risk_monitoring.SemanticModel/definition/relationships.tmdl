@@ -1,0 +1,25 @@
+relationship a3b7c71d-a807-2146-429e-58a758ddd308
+	fromColumn: fact_loan.purpose_id
+	toColumn: dim_purpose.purpose_id
+
+relationship 414f8fa8-f316-bd99-1061-fd4b6d073cf1
+	fromColumn: fact_loan.status_id
+	toColumn: dim_loan_status.status_id
+
+relationship ae8d4445-e48a-aec9-0406-b14b604e81a2
+	fromColumn: fact_loan.grade_id
+	toColumn: dim_grade.grade_id
+
+relationship 65637065-69cd-62d0-34f7-5ca826bd93e7
+	fromColumn: fact_loan.geography_id
+	toColumn: dim_geography.geography_id
+
+relationship 3320d452-fa60-bb46-8aad-13583f8374a8
+	fromColumn: fact_loan.issue_date
+	toColumn: dim_date.month_start
+
+relationship 5697898d-5325-a457-ab3a-f790dc8cee21
+	isActive: false
+	fromColumn: fact_loan.last_payment_date
+	toColumn: dim_date.month_start
+

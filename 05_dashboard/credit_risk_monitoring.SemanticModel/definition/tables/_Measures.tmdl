@@ -1,0 +1,106 @@
+table _Measures
+	lineageTag: dba350a2-2e49-4ea4-9dd6-fbd7ce30e153
+
+	measure Loans = COUNTROWS(fact_loan)
+		formatString: #,0
+		displayFolder: Portfolio
+		lineageTag: fde63044-ffb9-4884-9d93-27e7fffd3a7f
+
+	measure 'Funded Amount' = SUM(fact_loan[loan_amount])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Portfolio
+		lineageTag: 505cd958-bb88-4210-8752-5e0e6eddea6c
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Bad Loans' = SUM(fact_loan[is_bad])
+		formatString: #,0
+		displayFolder: Risk
+		lineageTag: 407e17f1-baca-4b30-9870-caa48eb2a6cd
+
+	measure 'Bad Rate' = DIVIDE([Bad Loans], [Loans])
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Risk
+		lineageTag: be913012-3253-4b64-b141-f7ab5477f695
+
+	measure 'Avg Interest Rate' = DIVIDE(AVERAGE(fact_loan[interest_rate]),100)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Portfolio
+		lineageTag: f4cef50d-6b36-4737-aa16-a7b47a919fd8
+
+	measure 'Charged-off Loans' = CALCULATE([Loans], dim_loan_status[loan_status_category] IN {"charged_off", "default"})
+		formatString: 0
+		displayFolder: Losses
+		lineageTag: 5efc5e92-4b9a-4e56-b413-92cf2fa1d55d
+
+	measure 'Gross Charge-off' =
+			
+			CALCULATE(
+			    SUMX(fact_loan, fact_loan[loan_amount] - fact_loan[principal_received]),
+			    dim_loan_status[loan_status_category] IN {"charged_off", "default"}
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Losses
+		lineageTag: 5ffb2db1-d2c3-4ddb-b70e-f58a2919f67a
+
+	measure Recoveries =
+			
+			CALCULATE(
+			    SUM(fact_loan[recoveries]),
+			    dim_loan_status[loan_status_category] IN {"charged_off", "default"}
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Losses
+		lineageTag: 0434a850-bd9f-4b23-be39-e50945fdf5f0
+
+	measure 'Net Charge-off' = [Gross Charge-off] - [Recoveries]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Losses
+		lineageTag: 5ec7b9ea-225e-45aa-88c7-4e3884d6d620
+
+	measure 'Net Charge-off Rate' = DIVIDE([Net Charge-off], [Funded Amount])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Losses
+		lineageTag: 4659b71a-9c83-43e4-a3c3-64a73508ac45
+
+	measure 'Active Loans' = CALCULATE([Loans], dim_loan_status[is_active] = 1)
+		formatString: 0
+		displayFolder: Delinquency
+		lineageTag: 59661035-0628-4f0c-9ea1-fa9dbbbf4f98
+
+	measure '30+ DPD Loans' = CALCULATE([Loans], dim_loan_status[loan_status_category] IN {"late", "default"})
+		formatString: 0
+		displayFolder: Delinquency
+		lineageTag: 036189c2-0fcb-4ae4-9382-9cbecf35c3e1
+
+	measure '30+ DPD Rate' = DIVIDE([30+ DPD Loans], [Active Loans])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Delinquency
+		lineageTag: 4efb3320-325d-4a99-b226-66fc37ddec84
+
+	measure 'Interest Earned' = SUM(fact_loan[interest_received])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Profitability
+		lineageTag: 382ab028-06a0-4343-88d2-b08113e08d29
+
+	measure 'Net Yield' = DIVIDE([Interest Earned] - [Net Charge-off], [Funded Amount])
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Profitability
+		lineageTag: 636683e3-c178-4d53-bc5c-e2672c62e878
+
+	measure 'Loan Share' = DIVIDE([Loans], CALCULATE([Loans], ALLSELECTED(dim_grade)))
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Portfolio
+		lineageTag: 3ee0e417-bce9-4a05-8b09-0f74b69f2bac
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				  Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"Column1"})
+				in
+				  #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

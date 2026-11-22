@@ -20,7 +20,7 @@ table dim_date
 		dataType: int64
 		formatString: 0
 		lineageTag: 4055aadb-820e-4375-89a8-293c05829273
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: year
 
 		changedProperty = IsHidden
@@ -31,7 +31,7 @@ table dim_date
 		dataType: int64
 		formatString: 0
 		lineageTag: af065487-7a51-4195-be0c-771bca96d26a
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: quarter
 
 		changedProperty = IsHidden
@@ -42,7 +42,7 @@ table dim_date
 		dataType: int64
 		formatString: 0
 		lineageTag: 0d7f2549-77d8-4c39-8f5d-316b83f2b5b0
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: month_num
 
 		changedProperty = IsHidden
@@ -79,4 +79,6 @@ table dim_date
 				  #"Navigation 2" = #"Navigation 1"{[Name = "dim_date"]}[Data]
 				in
 				  #"Navigation 2"
+
+	annotation PBI_ResultType = Table
 

@@ -15,7 +15,7 @@ table fact_loan
 		dataType: int64
 		formatString: 0
 		lineageTag: 64557e0e-d4c3-45c9-b3a9-57da79539071
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: grade_id
 
 		changedProperty = IsHidden
@@ -26,7 +26,7 @@ table fact_loan
 		dataType: int64
 		formatString: 0
 		lineageTag: 2bf9a907-8fdd-4d82-8506-b791df31d9b6
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: purpose_id
 
 		changedProperty = IsHidden
@@ -37,7 +37,7 @@ table fact_loan
 		dataType: int64
 		formatString: 0
 		lineageTag: 9b3e2e32-c656-4405-a7c2-9b6f04b10112
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: geography_id
 
 		changedProperty = IsHidden
@@ -48,7 +48,7 @@ table fact_loan
 		dataType: int64
 		formatString: 0
 		lineageTag: 67f184bf-90c2-4138-900e-59e24abaf0cc
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: status_id
 
 		changedProperty = IsHidden
@@ -309,4 +309,6 @@ table fact_loan
 				  #"Navigation 2" = #"Navigation 1"{[Name = "fact_loan"]}[Data]
 				in
 				  #"Navigation 2"
+
+	annotation PBI_ResultType = Table
 
