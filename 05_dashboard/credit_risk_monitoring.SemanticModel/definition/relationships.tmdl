@@ -23,3 +23,27 @@ relationship 5697898d-5325-a457-ab3a-f790dc8cee21
 	fromColumn: fact_loan.last_payment_date
 	toColumn: dim_date.month_start
 
+relationship 5dab0856-9058-d835-1ec3-2c39ea17bd56
+	fromColumn: dim_grade.grade
+	toColumn: dim_grade_letter.Grade
+
+relationship 8b42fbd3-1100-19ba-a054-a6fa1a167271
+	fromColumn: agg_vintage.grade
+	toColumn: dim_grade_letter.Grade
+
+relationship 7e5a85aa-e90a-0462-07b1-94c2bc8cab68
+	fromColumn: agg_vintage.issue_month
+	toColumn: dim_date.year_month
+
+relationship d60b0581-231a-ba4d-36e0-07d85669859a
+	fromColumn: agg_grade_monitoring.issue_month
+	toColumn: dim_date.year_month
+
+relationship 14b4d01d-b7f3-6fe4-5ef6-e35b83b4a5b8
+	fromColumn: agg_vintage_curve.issue_month
+	toColumn: dim_date.year_month
+
+relationship 0a1f3b8c-b9d4-2616-5813-22604d110406
+	fromColumn: agg_vintage_curve.grade
+	toColumn: dim_grade_letter.Grade
+

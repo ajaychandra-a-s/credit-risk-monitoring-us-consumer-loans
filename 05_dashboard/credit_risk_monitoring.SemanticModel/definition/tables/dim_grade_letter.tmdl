@@ -1,0 +1,16 @@
+table dim_grade_letter
+	lineageTag: 13272fc0-d42e-46e1-b8e5-a8c0a9234474
+
+	column Grade
+		lineageTag: e01828e6-a36c-46ab-af58-459d9de8bf49
+		summarizeBy: none
+		sourceColumn: dim_grade[grade]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_grade_letter = calculated
+		mode: import
+		source = DISTINCT(dim_grade[grade])
+
+	annotation PBI_Id = c3e5099999564019bca0ace17d82a1a5
+

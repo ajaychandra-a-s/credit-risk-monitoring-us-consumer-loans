@@ -1,0 +1,77 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "1dc210a64601fe0d35f8",
+  "position": {
+    "x": 1803.1901840490798,
+    "y": 0,
+    "z": 2,
+    "height": 307.23926380368096,
+    "width": 116.80981595092024,
+    "tabOrder": 2
+  },
+  "visual": {
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_grade_letter"
+                    }
+                  },
+                  "Property": "Grade"
+                }
+              },
+              "queryRef": "dim_grade_letter.Grade",
+              "nativeQueryRef": "Grade",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Basic'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {}
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "cbeda2c3c1d357512710",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_grade_letter"
+              }
+            },
+            "Property": "Grade"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

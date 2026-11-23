@@ -93,6 +93,29 @@ table _Measures
 		displayFolder: Portfolio
 		lineageTag: 3ee0e417-bce9-4a05-8b09-0f74b69f2bac
 
+	measure 'Cum Gross CO %' =
+			DIVIDE(
+			    SUM(agg_vintage_curve[gross_chargeoff_amount]),
+			    SUM(agg_vintage_curve[funded_amount]))
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Vintage
+		lineageTag: d3548367-69ca-42da-a1eb-f86cb1de5955
+
+	measure 'CO % at MOB 12' = CALCULATE([Cum Gross CO %], agg_vintage_curve[mob] = 12)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Vintage
+		lineageTag: 5448327b-ebc3-4d50-87d8-be36ba8238e2
+
+	measure 'CO % at MOB 24' = CALCULATE([Cum Gross CO %], agg_vintage_curve[mob] = 24)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Vintage
+		lineageTag: 8acaaddb-0cb1-4481-af6f-0fae0404e8ee
+
+	measure 'CO % at MOB 36' = CALCULATE([Cum Gross CO %], agg_vintage_curve[mob] = 36)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Vintage
+		lineageTag: 8025cd43-8be4-4b0c-9f06-dab6d65a4d2b
+
 	partition _Measures = m
 		mode: import
 		source =
