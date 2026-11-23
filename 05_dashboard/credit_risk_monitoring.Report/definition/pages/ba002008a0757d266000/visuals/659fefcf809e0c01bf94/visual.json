@@ -4,10 +4,10 @@
   "position": {
     "x": 23.558282208588956,
     "y": 659.63190184049074,
-    "z": 320,
+    "z": 13000,
     "height": 408.34355828220856,
     "width": 1150.4294478527606,
-    "tabOrder": 9000
+    "tabOrder": 11000
   },
   "visual": {
     "visualType": "clusteredColumnChart",
@@ -607,37 +607,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "83b3fa203b277e339802",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_grade"
-              }
-            },
-            "Property": "grade"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "64a7f64669fbc1af15a4",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Measures"
-              }
-            },
-            "Property": "Bad Rate"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

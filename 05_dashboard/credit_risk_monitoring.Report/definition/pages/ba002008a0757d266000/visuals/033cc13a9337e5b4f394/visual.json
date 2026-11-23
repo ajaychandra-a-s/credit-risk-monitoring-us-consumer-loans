@@ -4,10 +4,10 @@
   "position": {
     "x": 1193.6196319018404,
     "y": 659.63190184049074,
-    "z": 330,
+    "z": 14000,
     "height": 408.34355828220856,
     "width": 702.82208588957053,
-    "tabOrder": 13000
+    "tabOrder": 14000
   },
   "visual": {
     "visualType": "pivotTable",
@@ -472,79 +472,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "2f5684e77d6121bf9141",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dim_grade"
-              }
-            },
-            "Property": "grade"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "0092e19c63b92b4de9cf",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Measures"
-              }
-            },
-            "Property": "Funded Amount"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "dc1b265eafab40d4596d",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Measures"
-              }
-            },
-            "Property": "Interest Earned"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "7b5a178aa0ed8901c08e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Measures"
-              }
-            },
-            "Property": "Net Charge-off"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "c745922ca86289073d8d",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Measures"
-              }
-            },
-            "Property": "Net Yield"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }
