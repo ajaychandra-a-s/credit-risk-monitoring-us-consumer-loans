@@ -1,0 +1,160 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "2226d4343e2204752391",
+  "position": {
+    "x": 1202.4539877300615,
+    "y": 742.0858895705519,
+    "z": 8000,
+    "height": 321.96319018404904,
+    "width": 650.79754601226989,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_grade_letter"
+                    }
+                  },
+                  "Property": "Grade"
+                }
+              },
+              "queryRef": "dim_grade_letter.Grade",
+              "nativeQueryRef": "Grade",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Charged-off Loans"
+                }
+              },
+              "queryRef": "_Measures.Charged-off Loans",
+              "nativeQueryRef": "Charged-off Loans"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Gross Charge-off"
+                }
+              },
+              "queryRef": "_Measures.Gross Charge-off",
+              "nativeQueryRef": "Gross Charge-off"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Recoveries"
+                }
+              },
+              "queryRef": "_Measures.Recoveries",
+              "nativeQueryRef": "Recoveries"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Recovery Rate"
+                }
+              },
+              "queryRef": "_Measures.Recovery Rate",
+              "nativeQueryRef": "Recovery Rate"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Avg MOB at Charge-off"
+                }
+              },
+              "queryRef": "_Measures.Avg MOB at Charge-off",
+              "nativeQueryRef": "Avg MOB at Charge-off"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "columnFormatting": [
+        {
+          "properties": {
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1000000D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Measures.Gross Charge-off"
+          }
+        },
+        {
+          "properties": {
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1000000D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Measures.Recoveries"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Collections by grade'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

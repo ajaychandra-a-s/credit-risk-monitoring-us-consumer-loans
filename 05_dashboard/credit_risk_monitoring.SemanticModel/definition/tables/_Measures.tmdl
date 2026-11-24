@@ -29,7 +29,7 @@ table _Measures
 		lineageTag: f4cef50d-6b36-4737-aa16-a7b47a919fd8
 
 	measure 'Charged-off Loans' = CALCULATE([Loans], dim_loan_status[loan_status_category] IN {"charged_off", "default"})
-		formatString: 0
+		formatString: #,0
 		displayFolder: Losses
 		lineageTag: 5efc5e92-4b9a-4e56-b413-92cf2fa1d55d
 
@@ -115,6 +115,43 @@ table _Measures
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: Vintage
 		lineageTag: 8025cd43-8be4-4b0c-9f06-dab6d65a4d2b
+
+	measure '120+ DPD Loans' = CALCULATE([Loans], dim_loan_status[dpd_bucket] = "120+ DPD")
+		formatString: 0
+		displayFolder: Delinquency
+		lineageTag: 36da6eb9-26da-4495-9320-2b3d00dee022
+
+	measure 'Recovery Rate' = DIVIDE([Recoveries], [Gross Charge-off])
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Losses
+		lineageTag: 5b0018ed-7050-4c08-9917-095fb5203de8
+
+	measure 'Avg MOB at Charge-off' = ```
+			
+			CALCULATE(
+			    AVERAGEX(
+			        fact_loan,
+			        DATEDIFF(
+			            fact_loan[issue_date],
+			            COALESCE(fact_loan[last_payment_date], fact_loan[issue_date]), 
+			            MONTH
+			        )
+			    ),
+			    dim_loan_status[loan_status_category] IN {"charged_off", "default"}
+			)
+			```
+		formatString: 0.0
+		displayFolder: Losses
+		lineageTag: 21b44d1e-913d-47ae-9f06-9a4016a55f60
+
+	measure 'Gross Charge-off by Payment Month' =
+			CALCULATE(
+			    [Gross Charge-off],
+			    USERELATIONSHIP(fact_loan[last_payment_date], dim_date[month_start])
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Losses
+		lineageTag: 6996c0c6-2bd6-42d1-883c-0b857cd08a14
 
 	partition _Measures = m
 		mode: import
