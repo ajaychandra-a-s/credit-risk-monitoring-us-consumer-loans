@@ -1,5 +1,7 @@
 # 05 Dashboard: credit risk report in Power BI
 
+**[View the live report](https://app.powerbi.com/view?r=eyJrIjoiOGUzYmVkYWItMDUwYi00MGM1LWFjOTItNjJhNjkxYTE5YzNkIiwidCI6ImM2ZTU0OWIzLTVmNDUtNDAzMi1hYWU5LWQ0MjQ0ZGM1YjJjNCJ9)**
+
 This stage turns the Gold tables in Redshift into a 4-page credit risk report.
 Each page answers the questions of one group of users, from portfolio size and
 profitability down to delinquency, vintage losses and monitoring of the risk grade.

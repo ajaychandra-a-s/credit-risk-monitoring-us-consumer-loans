@@ -13,6 +13,8 @@ The pipeline is **incremental**: each run loads only the new month, and every
 stage can be re-run safely without duplicating data. It follows the **medallion
 architecture** (Bronze, Silver, Gold) and is orchestrated by **Apache Airflow**.
 
+**[View the live report](https://app.powerbi.com/view?r=eyJrIjoiOGUzYmVkYWItMDUwYi00MGM1LWFjOTItNjJhNjkxYTE5YzNkIiwidCI6ImM2ZTU0OWIzLTVmNDUtNDAzMi1hYWU5LWQ0MjQ0ZGM1YjJjNCJ9)**
+
 ## Table of Contents
 
 - [Dataset Used](#dataset-used)
