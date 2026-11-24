@@ -153,6 +153,44 @@ table _Measures
 		displayFolder: Losses
 		lineageTag: 6996c0c6-2bd6-42d1-883c-0b857cd08a14
 
+	measure 'Avg KS' = AVERAGE(agg_grade_monitoring[ks])
+		formatString: 0.0
+		displayFolder: Monitoring
+		lineageTag: ae35c4a0-22fb-40fb-8332-4304c6a4acb2
+
+	measure 'Avg Gini' = AVERAGE(agg_grade_monitoring[gini])
+		formatString: 0.000
+		displayFolder: Monitoring
+		lineageTag: 6232425d-ce08-49f3-85df-79177aaf1173
+
+	measure 'Latest PSI' = ```
+			
+			VAR LastMonth = MAX(agg_grade_monitoring[issue_month])
+			RETURN 
+			    CALCULATE(MAX(agg_grade_monitoring[psi]), agg_grade_monitoring[issue_month]  = LastMonth)
+			
+			```
+		formatString: 0.000
+		displayFolder: Monitoring
+		lineageTag: f9315859-a5fc-48d3-9eba-199563d4ccfd
+
+	measure 'Vintages to Monitor' =
+			
+			CALCULATE(
+			    COUNTROWS(agg_grade_monitoring),
+			    agg_grade_monitoring[psi_status] = "Monitor"
+			)
+		formatString: 0
+		displayFolder: Monitoring
+		lineageTag: 55250fb9-387e-49f4-8a83-c2a63a7ffef6
+
+	measure 'Vintages with Shift' =
+			
+			CALCULATE(COUNTROWS(agg_grade_monitoring), agg_grade_monitoring[psi_status] = "Shift") + 0
+		formatString: 0
+		displayFolder: Monitoring
+		lineageTag: 0dfe1d64-9488-43aa-b7e6-61896783ca6c
+
 	partition _Measures = m
 		mode: import
 		source =

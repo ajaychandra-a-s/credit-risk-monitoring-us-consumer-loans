@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "name": "a8273059fbe658e7f0ed",
+  "position": {
+    "x": 9.8159509202453989,
+    "y": 0,
+    "z": 0,
+    "height": 161.96319018404907,
+    "width": 279.75460122699383,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Avg KS"
+                }
+              },
+              "queryRef": "_Measures.Avg KS",
+              "nativeQueryRef": "Avg KS"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

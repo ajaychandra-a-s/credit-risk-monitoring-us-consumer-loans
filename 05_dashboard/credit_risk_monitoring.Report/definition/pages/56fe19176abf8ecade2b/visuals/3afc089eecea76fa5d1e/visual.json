@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "name": "3afc089eecea76fa5d1e",
+  "position": {
+    "x": 320,
+    "y": 0,
+    "z": 1000,
+    "height": 161.96319018404907,
+    "width": 279.75460122699383,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Avg Gini"
+                }
+              },
+              "queryRef": "_Measures.Avg Gini",
+              "nativeQueryRef": "Avg Gini"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

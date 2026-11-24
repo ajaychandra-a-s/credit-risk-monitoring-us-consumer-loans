@@ -1,0 +1,134 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "name": "44a16e61490d23195d73",
+  "position": {
+    "x": 1117.0552147239264,
+    "y": 219.87730061349691,
+    "z": 4003,
+    "height": 299,
+    "width": 507,
+    "tabOrder": 4003
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_grade"
+                    }
+                  },
+                  "Property": "sub_grade"
+                }
+              },
+              "queryRef": "dim_grade.sub_grade",
+              "nativeQueryRef": "sub_grade",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Bad Rate"
+                }
+              },
+              "queryRef": "_Measures.Bad Rate",
+              "nativeQueryRef": "Bad Rate"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_grade"
+                  }
+                },
+                "Property": "sub_grade"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Rank ordering: bad rate by sub-grade'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "c159b404e01a470a3d97",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_grade"
+              }
+            },
+            "Property": "sub_grade"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "23e82d0b861354444e0b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Bad Rate"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

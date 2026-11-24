@@ -1,0 +1,56 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "name": "7bd769c891e1204fa414",
+  "position": {
+    "x": 1230.920245398773,
+    "y": 0,
+    "z": 4000,
+    "height": 161.96319018404907,
+    "width": 279.75460122699383,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Vintages with Shift"
+                }
+              },
+              "queryRef": "_Measures.Vintages with Shift",
+              "nativeQueryRef": "Vintages with Shift"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "4b3a6dd32cb5f10208aa",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Vintages with Shift"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

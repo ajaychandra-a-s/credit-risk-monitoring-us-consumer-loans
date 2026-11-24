@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.15.0/schema.json",
+  "name": "277cc7a4837e52d4899f",
+  "position": {
+    "x": 622.3312883435583,
+    "y": 0,
+    "z": 2000,
+    "height": 161.96319018404907,
+    "width": 279.75460122699383,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Latest PSI"
+                }
+              },
+              "queryRef": "_Measures.Latest PSI",
+              "nativeQueryRef": "Latest PSI"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
