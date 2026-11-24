@@ -180,9 +180,22 @@ Details: [`04_orchestration`](04_orchestration/)
 
 ## Step 7: Dashboard (Power BI)
 
-*In progress.* Power BI connects to the Gold tables in Redshift for credit risk
-reporting: bad rate by grade, vintage performance by issue month, and loan
-volumes by purpose and state.
+A 4-page credit risk report on the Gold tables, built for four groups of users:
+leadership (Overview), credit risk (Vintage), collections (Delinquency) and model
+monitoring (Monitoring). Power BI imports the Gold tables with a read-only user, and
+30 DAX measures sit on a star schema.
+
+Key findings:
+- The bad rate rises from 3.0% for grade A to 39.4% for grade G, and net yield peaks at
+  grade C (8.2%) while grades F and G (3.9%, 1.2%) do not cover their losses.
+- By month 36 on book, grade G lost 39.4% of funded principal against 2.7% for grade A.
+- 30+ DPD rate of 2.29% on 940K active loans, with recoveries near 10% for every grade.
+- KS (27.4) and Gini (0.378) stayed stable, while PSI rose to 0.198 in 2018 as the book
+  moved toward grade A.
+
+![Overview](05_dashboard/images/01_overview.png)
+
+Details: [`05_dashboard`](05_dashboard/)
 
 ---
 
@@ -194,6 +207,7 @@ volumes by purpose and state.
 02_transformation/   Glue Silver job and Athena lake check
 03_warehouse/        Glue Gold job: S3 processed to Redshift
 04_orchestration/    Airflow DAG and Docker setup
+05_dashboard/        Power BI report: model, measures and 4 pages
 sql/athena/          Athena check queries
 sql/redshift/        Redshift table definitions (Silver and Gold)
 images/              Architecture and data model diagrams
