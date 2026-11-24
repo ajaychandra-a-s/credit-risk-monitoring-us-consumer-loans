@@ -64,7 +64,7 @@ table _Measures
 		lineageTag: 4659b71a-9c83-43e4-a3c3-64a73508ac45
 
 	measure 'Active Loans' = CALCULATE([Loans], dim_loan_status[is_active] = 1)
-		formatString: 0
+		formatString: #,0
 		displayFolder: Delinquency
 		lineageTag: 59661035-0628-4f0c-9ea1-fa9dbbbf4f98
 
