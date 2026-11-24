@@ -29,6 +29,22 @@ architecture** (Bronze, Silver, Gold) and is orchestrated by **Apache Airflow**.
 - [Step 7: Dashboard (Power BI)](#step-7-dashboard-power-bi)
 - [Repository Structure](#repository-structure)
 
+## Business Problem
+
+A consumer lender issues thousands of unsecured personal loans every month. Its credit
+risk team needs a trusted monthly view of the book to answer one question:
+**is the portfolio performing within risk appetite, and where should we act?**
+
+| Decision | Answered by |
+|---|---|
+| Are we pricing each grade for its risk? | Overview: net yield by grade |
+| Are newer loans performing worse? | Vintage: charge-off curves by months on book |
+| Where should collections focus? | Delinquency: DPD buckets, timing of charge-offs, recoveries |
+| Does the risk grade still rank risk? | Monitoring: KS, Gini, rank ordering, PSI |
+
+The pipeline delivers the data every month automatically, and the report turns it into
+these four decisions.
+
 ## Dataset Used
 
 Lending Club consumer loan data: one row per loan, with loan terms, borrower
