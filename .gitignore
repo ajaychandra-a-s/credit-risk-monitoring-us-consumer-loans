@@ -17,7 +17,10 @@ loans_dump.sql
 04_orchestration/logs/
 04_orchestration/plugins/
 04_orchestration/config/
+
 06_scorecard/data/
+!06_scorecard/outputs/*.csv
+
 .mcp.json
 
 # Power BI local files

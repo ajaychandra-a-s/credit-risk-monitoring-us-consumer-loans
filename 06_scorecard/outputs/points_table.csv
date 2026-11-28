@@ -1,0 +1,44 @@
+characteristic,bin,loans,bad_rate_%,points
+annual_inc,"(-inf, 37086.50)",51736,19.0,58
+annual_inc,"[37086.50, 45899.00)",39533,15.8,63
+annual_inc,"[45899.00, 62010.80)",70059,13.8,67
+annual_inc,"[62010.80, 75000.50)",44707,12.0,70
+annual_inc,"[75000.50, 100106.35)",52155,10.2,74
+annual_inc,"[100106.35, inf)",48272,8.7,78
+dti,"(-inf, 10.57)",68417,10.3,73
+dti,"[10.57, 15.57)",68715,11.5,71
+dti,"[15.57, 19.06)",48167,13.0,68
+dti,"[19.06, 25.05)",67267,14.7,65
+dti,"[25.05, 29.20)",30754,16.9,62
+dti,"[29.20, inf)",23142,18.5,60
+mort_acc,"(-inf, 0.50)",130113,15.8,66
+mort_acc,"[0.50, 1.50)",48019,12.9,68
+mort_acc,"[1.50, 2.50)",38668,11.6,69
+mort_acc,"[2.50, 3.50)",29241,10.8,69
+mort_acc,"[3.50, 4.50)",21615,10.3,70
+mort_acc,"[4.50, inf)",32781,9.6,70
+mort_acc,Missing,6025,13.2,68
+home_ownership,['ANY' 'MORTGAGE'],145510,10.9,71
+home_ownership,['OWN'],28779,14.0,67
+home_ownership,['RENT' 'NONE' 'OTHER'],132173,15.6,65
+inq_last_6mths,"(-inf, 0.50)",161074,11.6,73
+inq_last_6mths,"[0.50, 1.50)",86243,14.0,66
+inq_last_6mths,"[1.50, 2.50)",37319,16.2,59
+inq_last_6mths,"[2.50, inf)",21826,17.4,56
+revol_util,"(-inf, 21.05)",24969,9.6,79
+revol_util,"[21.05, 33.05)",31186,11.3,74
+revol_util,"[33.05, 42.85)",35635,12.1,71
+revol_util,"[42.85, 63.15)",91647,13.3,67
+revol_util,"[63.15, 86.35)",92278,14.4,65
+revol_util,"[86.35, inf)",30573,15.9,61
+revol_util,Missing,174,14.9,63
+credit_history_months,"(-inf, 86.50)",26279,17.1,65
+credit_history_months,"[86.50, 128.50)",47708,14.8,67
+credit_history_months,"[128.50, 140.50)",19919,14.2,67
+credit_history_months,"[140.50, 186.50)",80869,13.3,68
+credit_history_months,"[186.50, 225.50)",46470,12.5,68
+credit_history_months,"[225.50, inf)",85217,11.3,69
+purpose,['car' 'credit_card'],78490,11.2,73
+purpose,['home_improvement' 'major_purchase' 'wedding'],23437,11.7,71
+purpose,['debt_consolidation' 'vacation'],178617,13.8,66
+purpose,['house' 'other' 'medical' 'renewable_energy' 'moving' 'small_business'],25918,17.2,60

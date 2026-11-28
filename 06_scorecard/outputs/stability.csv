@@ -1,0 +1,4 @@
+year,loans,avg_score,psi,status
+2016,323495,545.7,0.024,Stable
+2017,320419,546.5,0.043,Stable
+2018,344671,547.9,0.101,Monitor
