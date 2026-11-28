@@ -29,6 +29,7 @@ architecture** (Bronze, Silver, Gold) and is orchestrated by **Apache Airflow**.
 - [Step 5: Warehouse (Redshift Gold)](#step-5-warehouse-redshift-gold)
 - [Step 6: Orchestration (Airflow)](#step-6-orchestration-airflow)
 - [Step 7: Dashboard (Power BI)](#step-7-dashboard-power-bi)
+- [Step 8: Application scorecard](#step-8-application-scorecard)
 - [Repository Structure](#repository-structure)
 
 ## Business Problem
@@ -217,6 +218,40 @@ Details: [`05_dashboard`](05_dashboard/)
 
 ---
 
+## Step 8: Application scorecard
+
+An independent application scorecard built from 8 characteristics known on the
+application date, using optimal binning, Weight of Evidence, logistic regression and
+standard points scaling. It was developed on matured 2012 to 2014 loans and validated
+on 2015 loans.
+
+- Gini 0.254 out of time (0.259 in development), about 70% of the lender's sub-grade
+  (0.357) without a credit bureau score.
+- The bad rate falls from 25.9% in the lowest score band to 6.6% in the highest.
+- Declining the lowest band avoids 14.9% of bad loans for an 8.6% fall in approvals.
+- The score stays stable through 2017 (PSI below 0.05) and reaches the Monitor band in
+  2018 (0.101) as borrowers shift toward safer profiles.
+
+![Gini comparison](06_scorecard/images/03_gini_comparison.png)
+
+Details: [`06_scorecard`](06_scorecard/)
+
+---
+
+## Results and Recommendations
+
+| Question | Result | Recommendation |
+|---|---|---|
+| Are we pricing each grade for its risk? | Net yield peaks at grade C (8.2%) and falls to 3.9% for F and 1.2% for G | Reprice or cap lending to grades F and G |
+| Are newer loans performing worse? | No. Recent vintages sit at or below older ones at the same age, partly due to the shift toward grade A | Keep the tighter approvals, and watch young vintages through their 30+ DPD rate, since charge-offs lag |
+| Where should collections focus? | 30+ DPD is 2.29% overall but 8.67% for grade G. Risky grades charge off about 3 months sooner, and recoveries stay near 10% | Start early outreach for grades E to G around months 10 to 13 on book |
+| Does the risk grade still work? | KS 27.4 and Gini 0.378 are stable, and rank ordering holds across all 35 sub-grades. PSI reached 0.198 (Monitor) in 2018 | Review the grade's calibration on the new, safer mix. No rebuild needed |
+| Can we score applicants ourselves? | A scorecard on 8 application characteristics reaches Gini 0.254 on later loans, against 0.357 for the lender's grade | Decline or reprice the lowest score band. Add a bureau score to close the gap |
+
+**Limitations:** the data is a snapshot with no monthly history, so there are no roll rates.
+Charge-off timing comes from the last payment date, recent vintages are not yet mature,
+and the scorecard is built on approved loans only.
+
 ## Repository Structure
 
 ```
@@ -226,6 +261,7 @@ Details: [`05_dashboard`](05_dashboard/)
 03_warehouse/        Glue Gold job: S3 processed to Redshift
 04_orchestration/    Airflow DAG and Docker setup
 05_dashboard/        Power BI report: model, measures and 4 pages
+06_scorecard/        Application scorecard: binning, model, validation, cut-off
 sql/athena/          Athena check queries
 sql/redshift/        Redshift table definitions (Silver and Gold)
 images/              Architecture and data model diagrams
