@@ -5,3 +5,8 @@ sqlalchemy
 pymysql
 python-dotenv
 boto3
+scikit-learn
+optbinning
+statsmodels
+matplotlib
+scipy
